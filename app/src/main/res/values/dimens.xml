@@ -11,5 +11,6 @@
     <dimen name="vertical_line_width">0.4dp</dimen>
 
     <dimen name="checked_width">15dp</dimen>
+    <dimen name="find_item_head_width">45dp</dimen>
 
 </resources>

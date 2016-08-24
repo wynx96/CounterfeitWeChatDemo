@@ -15,4 +15,11 @@
     <color name="line_color">#DBDBDB</color>
 
     <color name="title_bar_bg_color">@color/colorPrimary</color>
+
+    <color name="find_item_username_color">#7382A1</color>
+    <color name="find_item_content_color">#1B1B1B</color>
+    <color name="find_item_create_time_color">#ACACAC</color>
+
+    <drawable name="find_item_content_pressed">#22000000</drawable>
+    <drawable name="find_item_content_normal">@color/tab_bg_bottom_color</drawable>
 </resources>
