@@ -1,4 +1,4 @@
-package com.lyb.wechat.ui;
+package com.lyb.wechat;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,7 +11,7 @@ public class MyApplication extends Application {
 
     public MyApplication() {
         myApplication = this;
-//        LinearLayout.
+//        LinearLayout.vertical
     }
 
     public static MyApplication getApplication() {

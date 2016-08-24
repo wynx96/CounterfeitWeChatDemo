@@ -8,4 +8,8 @@
 
 
     <dimen name="horizontal_line_width">0.4dp</dimen>
+    <dimen name="vertical_line_width">0.4dp</dimen>
+
+    <dimen name="checked_width">15dp</dimen>
+
 </resources>

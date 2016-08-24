@@ -8,4 +8,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="info">信息</string>
     <string name="find">发现</string>
+    <string name="counterfeit_wechat">仿微信</string>
 </resources>
