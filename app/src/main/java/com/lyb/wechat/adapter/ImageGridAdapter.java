@@ -4,12 +4,11 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.lyb.wechat.R;
-import com.lyb.wechat.ui.widget.view.SquareFrameLayout;
+import com.lyb.wechat.ui.widget.view.SquareImageView;
 import com.yuyh.library.imgsel.ImageLoader;
 
 /**
@@ -60,15 +59,18 @@ public class ImageGridAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ImageViewHolder holder = new ImageViewHolder(new SquareFrameLayout(getContext()));
+        SquareImageView imageView = new SquareImageView(getContext());
+        imageView.setBackgroundResource(R.drawable.find_item_image_overlay);
+        imageView.setClickable(true);
+        RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(imageView) {
+        };
         switch (viewType) {
             case TYPE_SHOW:
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 return holder;
             case TYPE_ADD:
-                holder.imageView.setImageResource(R.mipmap.add);
-                holder.imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                holder.overlayView.setClickable(false);
-                holder.overlayView.setVisibility(View.GONE);
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setImageResource(R.mipmap.add);
                 return holder;
         }
         return null;
@@ -88,10 +90,8 @@ public class ImageGridAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final int layoutPosition = holder.getLayoutPosition();
-        if (holder.getItemViewType() == TYPE_SHOW) {
-            if (layoutPosition >= 0 && layoutPosition < size()) {
-                imageLoader.displayImage(getContext(), get(layoutPosition), ((ImageViewHolder) holder).imageView);
-            }
+        if (holder.getItemViewType() == TYPE_SHOW && (layoutPosition >= 0 && layoutPosition < size())) {
+            imageLoader.displayImage(getContext(), get(layoutPosition), ((ImageView) holder.itemView));
         } else {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -119,23 +119,4 @@ public class ImageGridAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
         this.onClickListener = onClickListener;
     }
 
-    public static class ImageViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        View overlayView;
-
-        public ImageViewHolder(View itemView) {
-            super(itemView);
-            FrameLayout frameLayout = (FrameLayout) itemView;
-
-            imageView = new ImageView(itemView.getContext());
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-            overlayView = new View(itemView.getContext());
-            overlayView.setBackgroundResource(R.drawable.find_item_image_overlay);
-            overlayView.setClickable(true);
-
-            frameLayout.addView(imageView);
-            frameLayout.addView(overlayView);
-        }
-    }
 }

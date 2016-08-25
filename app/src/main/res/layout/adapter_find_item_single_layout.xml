@@ -59,25 +59,13 @@
                 android:visibility="visible" />
         </com.lyb.wechat.ui.widget.view.ExpandableTextView>
 
-        <FrameLayout
+        <com.lyb.wechat.ui.widget.view.OverlayImageView
+            android:id="@+id/find_item_image_single"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/find_item_image_single"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:scaleType="centerInside" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/find_item_image_overlay"
-                android:clickable="true" />
-
-        </FrameLayout>
-
+            android:layout_height="wrap_content"
+            android:background="@drawable/find_item_image_overlay"
+            android:clickable="true"
+            android:scaleType="centerInside" />
 
         <LinearLayout
             android:layout_width="match_parent"
