@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.util.DiffUtil;
@@ -29,7 +28,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public class FindFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SharedPreferences.OnSharedPreferenceChangeListener {
+import rx.Subscription;
+import rx.functions.Action0;
+import rx.schedulers.Schedulers;
+
+public class FindFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private RecyclerView mRecyclerView;
     private ImageView mImageBg;
@@ -83,14 +86,13 @@ public class FindFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         mSwipeRefreshLayout.setRefreshing(true);
         onRefresh();
-
     }
 
     @Override
     public void onRefresh() {
-        new Thread(new Runnable() {
+        Subscription subscription = Schedulers.io().createWorker().schedule(new Action0() {
             @Override
-            public void run() {
+            public void call() {
                 final List<FindBean> beanList = getFindBeans();
                 final DiffUtil.DiffResult diffResult = calculateDiff(beanList);
                 getActivity().runOnUiThread(new Runnable() {
@@ -103,7 +105,9 @@ public class FindFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     }
                 });
             }
-        }).start();
+        });
+        addSubscription(subscription);
+
     }
 
     private DiffUtil.DiffResult calculateDiff(final List<FindBean> newList) {

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -32,6 +31,7 @@ import java.util.Random;
 import java.util.Set;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -40,7 +40,7 @@ import rx.schedulers.Schedulers;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class InfoFragment extends Fragment {
+public class InfoFragment extends BaseFragment {
 
     private static final int REQUEST_CODE = 0;
     private EditText mInfoEditContent;
@@ -135,7 +135,7 @@ public class InfoFragment extends Fragment {
         HeadUrl.getHeadUrlList().get(new Random().nextInt(HeadUrl.getHeadUrlList().size()));
         findBean.setImageUrl(HeadUrl.getHeadUrlList().get(new Random().nextInt(HeadUrl.getHeadUrlList().size())));
 
-        Observable.just(findBean).map(new Func1<FindBean, Boolean>() {
+        Subscription subscribe = Observable.just(findBean).map(new Func1<FindBean, Boolean>() {
             @Override
             public Boolean call(FindBean findBean) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -156,17 +156,7 @@ public class InfoFragment extends Fragment {
                 }
             }
         });
-        /*SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        Set<String> set = preferences.getStringSet(FindBean.class.getName(), new HashSet<String>());
-        Gson gson = new Gson();
-        String json = gson.toJson(findBean);
-        set.add(json);
-        if (preferences.edit().putStringSet(FindBean.class.getName(), set).commit()) {
-            Toast.makeText(InfoFragment.this.getActivity(), "添加成功，请到发现页刷新", Toast.LENGTH_SHORT).show();
-            mInfoEditUsername.setText(null);
-            mInfoEditContent.setText(null);
-            adapter.clear();
-        }*/
+        addSubscription(subscribe);
     }
 
 }

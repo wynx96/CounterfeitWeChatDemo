@@ -3,7 +3,6 @@ package com.lyb.wechat.ui.activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +11,7 @@ import com.lyb.wechat.R;
 import com.lyb.wechat.adapter.SectionsPagerAdapter;
 import com.lyb.wechat.ui.widget.view.ViewPagerIndicator;
 
-public class WeChatActivity extends AppCompatActivity {
+public class WeChatActivity extends BaseActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
