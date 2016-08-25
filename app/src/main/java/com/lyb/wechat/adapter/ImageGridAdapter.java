@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.lyb.wechat.R;
 import com.lyb.wechat.ui.widget.view.SquareFrameLayout;
+import com.yuyh.library.imgsel.ImageLoader;
 
 /**
  * Created by 18348 on 2016/8/25.
@@ -56,6 +57,7 @@ public class ImageGridAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
                                 (size() == 0 && position == 0) ? TYPE_ADD : TYPE_SHOW));
     }
 
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ImageViewHolder holder = new ImageViewHolder(new SquareFrameLayout(getContext()));
@@ -72,15 +74,23 @@ public class ImageGridAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolde
         return null;
     }
 
+    private ImageLoader imageLoader = new ImageLoader() {
+        @Override
+        public void displayImage(Context context, String path, ImageView imageView) {
+            Glide.with(context).load(path)
+                    .placeholder(R.mipmap.default_head)
+                    .error(R.mipmap.default_head)
+                    .into(imageView);
+        }
+    };
+
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final int layoutPosition = holder.getLayoutPosition();
-        if (getItemViewType(layoutPosition) == TYPE_SHOW) {
+        if (holder.getItemViewType() == TYPE_SHOW) {
             if (layoutPosition >= 0 && layoutPosition < size()) {
-                Glide.with(getContext()).load(get(layoutPosition))
-                        .placeholder(R.mipmap.default_head)
-                        .error(R.mipmap.default_head)
-                        .into(((ImageViewHolder) holder).imageView);
+                imageLoader.displayImage(getContext(), get(layoutPosition), ((ImageViewHolder) holder).imageView);
             }
         } else {
             holder.itemView.setOnClickListener(new View.OnClickListener() {

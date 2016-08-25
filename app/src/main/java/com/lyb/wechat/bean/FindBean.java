@@ -104,4 +104,32 @@ public class FindBean implements Parcelable {
         }
     };
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FindBean findBean = (FindBean) o;
+
+        if (createTime != findBean.createTime) return false;
+        if (username != null ? !username.equals(findBean.username) : findBean.username != null)
+            return false;
+        if (imageUrl != null ? !imageUrl.equals(findBean.imageUrl) : findBean.imageUrl != null)
+            return false;
+        if (content != null ? !content.equals(findBean.content) : findBean.content != null)
+            return false;
+        return imagePaths != null ? imagePaths.equals(findBean.imagePaths) : findBean.imagePaths == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username != null ? username.hashCode() : 0;
+        result = 31 * result + (imageUrl != null ? imageUrl.hashCode() : 0);
+        result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (imagePaths != null ? imagePaths.hashCode() : 0);
+        result = 31 * result + (int) (createTime ^ (createTime >>> 32));
+        return result;
+    }
 }

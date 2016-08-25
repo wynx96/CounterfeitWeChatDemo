@@ -13,6 +13,8 @@ import com.lyb.wechat.bean.FindBean;
 import com.lyb.wechat.ui.widget.divider.GridSpanItemDecoration;
 import com.lyb.wechat.ui.widget.view.ExpandableTextView;
 
+import java.util.List;
+
 /**
  * Created by 18348 on 2016/8/24.
  */
@@ -29,13 +31,25 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((FindViewHolder) holder).expandableTextView.setText(getContext().getString(R.string.default_content));
+    public int getItemCount() {
+        return super.getItemCount();
     }
 
     @Override
-    public int getItemCount() {
-        return super.getItemCount() + 10;
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        FindViewHolder viewHolder = (FindViewHolder) holder;
+        viewHolder.expandableTextView.setText(getContext().getString(R.string.default_content));
+        ImageGridAdapter adapter = (ImageGridAdapter) viewHolder.imageGrid.getAdapter();
+        adapter.clear();
+        final int layoutPosition = holder.getLayoutPosition();
+        if (layoutPosition >= 0 && layoutPosition < size()) {
+            FindBean findBean = get(layoutPosition);
+            viewHolder.expandableTextView.setText(findBean.getContent());
+            List<String> imagePaths = findBean.getImagePaths();
+            if (imagePaths != null && !imagePaths.isEmpty()) {
+                adapter.addAll(imagePaths);
+            }
+        }
     }
 
     public class FindViewHolder extends RecyclerView.ViewHolder {
