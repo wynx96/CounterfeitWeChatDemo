@@ -1,8 +1,10 @@
 package com.lyb.wechat.adapter;
 
 import android.content.Context;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -10,12 +12,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.lyb.wechat.R;
+import com.lyb.wechat.adapter.diff.DiffCallback;
 import com.lyb.wechat.bean.FindBean;
 import com.lyb.wechat.ui.widget.divider.GridSpanItemDecoration;
 import com.lyb.wechat.ui.widget.view.ExpandableTextView;
 import com.lyb.wechat.util.TimeUtil;
 import com.yuyh.library.imgsel.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,18 +57,26 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FindViewHolder viewHolder = (FindViewHolder) holder;
         ImageGridAdapter adapter = (ImageGridAdapter) viewHolder.imageGrid.getAdapter();
-        adapter.clear();
         final int layoutPosition = holder.getLayoutPosition();
-        if (layoutPosition >= 0 && layoutPosition < size()) {
-            FindBean findBean = get(layoutPosition);
-            viewHolder.expandableTextView.setText(findBean.getContent());
-            imageLoader.displayImage(getContext(), findBean.getImageUrl(), viewHolder.userHead);
-            viewHolder.username.setText(findBean.getUsername());
-            viewHolder.createTime.setText(TimeUtil.formatDate(findBean.getCreateTime()));
-            List<String> imagePaths = findBean.getImagePaths();
-            if (imagePaths != null && !imagePaths.isEmpty()) {
-                adapter.addAll(imagePaths);
-            }
+        if (layoutPosition < 0 && layoutPosition >= size()) {
+            return;
+        }
+        FindBean findBean = get(layoutPosition);
+        viewHolder.expandableTextView.setText(findBean.getContent());
+        imageLoader.displayImage(getContext(), findBean.getImageUrl(), viewHolder.userHead);
+        viewHolder.username.setText(findBean.getUsername());
+        viewHolder.createTime.setText(TimeUtil.formatDate(findBean.getCreateTime()));
+
+        List<String> imagePaths = findBean.getImagePaths();
+        if (imagePaths != null /*&& !imagePaths.isEmpty()*/) {
+            adapter.getList().clear();
+            adapter.getList().addAll(imagePaths);
+            DiffUtil.calculateDiff(new DiffCallback<String>(new ArrayList<String>(adapter.getList()), imagePaths) {
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    return TextUtils.equals(oldList.get(oldItemPosition), newList.get(newItemPosition));
+                }
+            }).dispatchUpdatesTo(viewHolder.imageGrid.getAdapter());
         }
     }
 
