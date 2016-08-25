@@ -20,6 +20,10 @@ public abstract class BaseRecyclerAdapter<H extends RecyclerView.ViewHolder, T> 
     protected LayoutInflater layoutInflater;
     private boolean autoRefresh = true;
 
+    public List<T> getList() {
+        return mList;
+    }
+
     public void setAutoRefresh(boolean autoRefresh) {
         this.autoRefresh = autoRefresh;
     }

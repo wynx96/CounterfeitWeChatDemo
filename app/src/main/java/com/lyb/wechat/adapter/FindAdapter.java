@@ -16,7 +16,6 @@ import com.lyb.wechat.ui.widget.view.ExpandableTextView;
 import com.lyb.wechat.util.TimeUtil;
 import com.yuyh.library.imgsel.ImageLoader;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -48,7 +47,6 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
                     .into(imageView);
         }
     };
-
 
 
     @Override

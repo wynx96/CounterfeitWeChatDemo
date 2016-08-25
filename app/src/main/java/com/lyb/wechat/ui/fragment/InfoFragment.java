@@ -31,6 +31,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -129,15 +135,38 @@ public class InfoFragment extends Fragment {
         HeadUrl.getHeadUrlList().get(new Random().nextInt(HeadUrl.getHeadUrlList().size()));
         findBean.setImageUrl(HeadUrl.getHeadUrlList().get(new Random().nextInt(HeadUrl.getHeadUrlList().size())));
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Observable.just(findBean).map(new Func1<FindBean, Boolean>() {
+            @Override
+            public Boolean call(FindBean findBean) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Set<String> set = preferences.getStringSet(FindBean.class.getName(), new HashSet<String>());
+                Gson gson = new Gson();
+                String json = gson.toJson(findBean);
+                set.add(json);
+                return preferences.edit().putStringSet(FindBean.class.getName(), set).commit();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                if (aBoolean) {
+                    Toast.makeText(InfoFragment.this.getActivity(), "添加成功，请到发现页刷新", Toast.LENGTH_SHORT).show();
+                    mInfoEditUsername.setText(null);
+                    mInfoEditContent.setText(null);
+                    adapter.clear();
+                }
+            }
+        });
+        /*SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Set<String> set = preferences.getStringSet(FindBean.class.getName(), new HashSet<String>());
         Gson gson = new Gson();
         String json = gson.toJson(findBean);
         set.add(json);
-        preferences.edit().putStringSet(FindBean.class.getName(), set).apply();
-        Toast.makeText(InfoFragment.this.getActivity(), "添加成功，请到发现页刷新", Toast.LENGTH_SHORT).show();
-        mInfoEditUsername.setText(null);
-        mInfoEditContent.setText(null);
-        adapter.clear();
+        if (preferences.edit().putStringSet(FindBean.class.getName(), set).commit()) {
+            Toast.makeText(InfoFragment.this.getActivity(), "添加成功，请到发现页刷新", Toast.LENGTH_SHORT).show();
+            mInfoEditUsername.setText(null);
+            mInfoEditContent.setText(null);
+            adapter.clear();
+        }*/
     }
+
 }

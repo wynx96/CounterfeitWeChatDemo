@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 import com.lyb.wechat.R;
 import com.lyb.wechat.adapter.FindAdapter;
+import com.lyb.wechat.adapter.diff.DiffCallback;
 import com.lyb.wechat.bean.FindBean;
 import com.lyb.wechat.ui.widget.divider.DividerItemDecoration;
 
@@ -77,11 +79,11 @@ public class FindFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         adapter = new FindAdapter(getActivity());
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setNestedScrollingEnabled(false);
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
         mSwipeRefreshLayout.setRefreshing(true);
         onRefresh();
 
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -90,16 +92,35 @@ public class FindFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void run() {
                 final List<FindBean> beanList = getFindBeans();
+                final DiffUtil.DiffResult diffResult = calculateDiff(beanList);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        adapter.getList().clear();
+                        adapter.getList().addAll(beanList);
+                        diffResult.dispatchUpdatesTo(adapter);
                         mSwipeRefreshLayout.setRefreshing(false);
-                        adapter.clear();
-                        adapter.addAll(beanList);
                     }
                 });
             }
         }).start();
+    }
+
+    private DiffUtil.DiffResult calculateDiff(final List<FindBean> newList) {
+        final List<FindBean> oldList = new ArrayList<>(adapter.getList());
+        return DiffUtil.calculateDiff(new DiffCallback<FindBean>(oldList, newList) {
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return oldList.get(oldItemPosition).getCreateTime() == newList.get(newItemPosition).getCreateTime();
+            }
+
+            @Nullable
+            @Override
+            public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+                return newList.get(newItemPosition);
+            }
+        });
     }
 
     private List<FindBean> getFindBeans() {
@@ -117,7 +138,7 @@ public class FindFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             Collections.sort(beanList, new Comparator<FindBean>() {
                 @Override
                 public int compare(FindBean lhs, FindBean rhs) {
-                    return new Long(rhs.getCreateTime()).compareTo(lhs.getCreateTime());
+                    return Long.valueOf(rhs.getCreateTime()).compareTo(lhs.getCreateTime());
                 }
             });
         }
