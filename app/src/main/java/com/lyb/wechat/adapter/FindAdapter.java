@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.lyb.wechat.R;
 import com.lyb.wechat.bean.FindBean;
 import com.lyb.wechat.ui.widget.view.ExpandableTextView;
-import com.lyb.wechat.ui.widget.view.SquareImageView;
 
 /**
  * Created by 18348 on 2016/8/24.
@@ -63,29 +62,11 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
             this.imageGrid.addItemDecoration(new RecyclerView.ItemDecoration() {
                 @Override
                 public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                    outRect.set(0, 0, 15, 15);
+                    outRect.set(0, 0, 10, 10);
                 }
             });
 
-            this.imageGrid.setAdapter(new BaseRecyclerAdapter(getContext()) {
-                @Override
-                public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                    return new RecyclerView.ViewHolder(new SquareImageView(getContext())) {
-                    };
-                }
-
-                @Override
-                public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-                    ImageView imageView = (ImageView) holder.itemView;
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    imageView.setImageResource(R.mipmap.default_head);
-                }
-
-                @Override
-                public int getItemCount() {
-                    return 8;
-                }
-            });
+            this.imageGrid.setAdapter(new ImageGridAdapter(getContext()));
         }
 
     }

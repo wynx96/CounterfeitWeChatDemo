@@ -3,11 +3,13 @@ package com.lyb.wechat.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.lyb.wechat.R;
 import com.lyb.wechat.adapter.FindAdapter;
@@ -16,6 +18,8 @@ import com.lyb.wechat.ui.widget.divider.DividerItemDecoration;
 public class FindFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
+    private ImageView mImageBg;
+    private NestedScrollView mScrollView;
 
     public static FindFragment newInstance() {
         return new FindFragment();
@@ -42,6 +46,9 @@ public class FindFragment extends Fragment {
 
     private void initView(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.RecyclerView);
+        mImageBg = (ImageView) view.findViewById(R.id.image_bg);
+        mScrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
+
     }
 
 
@@ -53,6 +60,7 @@ public class FindFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
         mRecyclerView.setAdapter(new FindAdapter(getActivity()));
+        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
 }

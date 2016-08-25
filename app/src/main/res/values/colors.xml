@@ -22,4 +22,7 @@
 
     <drawable name="find_item_content_pressed">#22000000</drawable>
     <drawable name="find_item_content_normal">@color/tab_bg_bottom_color</drawable>
+
+    <drawable name="find_item_image_pressed">#33000000</drawable>
+    <drawable name="find_item_image_normal">@android:color/transparent</drawable>
 </resources>
