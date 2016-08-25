@@ -136,5 +136,8 @@ public class InfoFragment extends Fragment {
         set.add(json);
         preferences.edit().putStringSet(FindBean.class.getName(), set).apply();
         Toast.makeText(InfoFragment.this.getActivity(), "添加成功，请到发现页刷新", Toast.LENGTH_SHORT).show();
+        mInfoEditUsername.setText(null);
+        mInfoEditContent.setText(null);
+        adapter.clear();
     }
 }

@@ -8,11 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.lyb.wechat.R;
 import com.lyb.wechat.bean.FindBean;
 import com.lyb.wechat.ui.widget.divider.GridSpanItemDecoration;
 import com.lyb.wechat.ui.widget.view.ExpandableTextView;
+import com.yuyh.library.imgsel.ImageLoader;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,16 +39,30 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
         return super.getItemCount();
     }
 
+    private ImageLoader imageLoader = new ImageLoader() {
+        @Override
+        public void displayImage(Context context, String path, ImageView imageView) {
+            Glide.with(context).load(path)
+                    .placeholder(R.mipmap.default_head)
+                    .error(R.mipmap.default_head)
+                    .into(imageView);
+        }
+    };
+
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd hh-mm");
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         FindViewHolder viewHolder = (FindViewHolder) holder;
-        viewHolder.expandableTextView.setText(getContext().getString(R.string.default_content));
         ImageGridAdapter adapter = (ImageGridAdapter) viewHolder.imageGrid.getAdapter();
         adapter.clear();
         final int layoutPosition = holder.getLayoutPosition();
         if (layoutPosition >= 0 && layoutPosition < size()) {
             FindBean findBean = get(layoutPosition);
             viewHolder.expandableTextView.setText(findBean.getContent());
+            imageLoader.displayImage(getContext(), findBean.getImageUrl(), viewHolder.userHead);
+            viewHolder.username.setText(findBean.getUsername());
+            viewHolder.createTime.setText(simpleDateFormat.format(new Date(findBean.getCreateTime())) + "");
             List<String> imagePaths = findBean.getImagePaths();
             if (imagePaths != null && !imagePaths.isEmpty()) {
                 adapter.addAll(imagePaths);
