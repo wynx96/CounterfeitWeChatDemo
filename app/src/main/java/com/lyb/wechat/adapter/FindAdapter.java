@@ -1,7 +1,6 @@
 package com.lyb.wechat.adapter;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 
 import com.lyb.wechat.R;
 import com.lyb.wechat.bean.FindBean;
+import com.lyb.wechat.ui.widget.divider.GridSpanItemDecoration;
 import com.lyb.wechat.ui.widget.view.ExpandableTextView;
 
 /**
@@ -59,12 +59,7 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
             this.expandableTextView = (ExpandableTextView) itemView.findViewById(R.id.ExpandableTextView);
 
             this.imageGrid.setLayoutManager(new GridLayoutManager(getContext(), 3));
-            this.imageGrid.addItemDecoration(new RecyclerView.ItemDecoration() {
-                @Override
-                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                    outRect.set(0, 0, 10, 10);
-                }
-            });
+            this.imageGrid.addItemDecoration(new GridSpanItemDecoration(10, 10));
 
             this.imageGrid.setAdapter(new ImageGridAdapter(getContext()));
         }

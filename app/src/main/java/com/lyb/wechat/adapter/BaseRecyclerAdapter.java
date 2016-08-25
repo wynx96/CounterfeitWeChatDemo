@@ -15,9 +15,9 @@ import java.util.ListIterator;
  */
 public abstract class BaseRecyclerAdapter<H extends RecyclerView.ViewHolder, T> extends
         RecyclerView.Adapter<H> implements List<T> {
-    private List<T> mList;
-    private Context context;
-    private LayoutInflater layoutInflater;
+    protected List<T> mList;
+    protected Context context;
+    protected LayoutInflater layoutInflater;
     private boolean autoRefresh = true;
 
     public void setAutoRefresh(boolean autoRefresh) {
@@ -66,7 +66,7 @@ public abstract class BaseRecyclerAdapter<H extends RecyclerView.ViewHolder, T> 
     public boolean add(T object) {
         boolean add = mList.add(object);
         if (add && isAutoRefresh()) {
-            notifyDataSetChanged();
+            notifyItemInserted(size() - 1);
         }
         return add;
     }
