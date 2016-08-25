@@ -107,7 +107,6 @@ public class FindFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             }
         });
         addSubscription(subscription);
-
     }
 
     private DiffUtil.DiffResult calculateDiff(final List<FindBean> newList) {

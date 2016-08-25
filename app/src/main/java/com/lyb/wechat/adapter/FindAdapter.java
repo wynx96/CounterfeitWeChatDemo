@@ -25,16 +25,35 @@ import java.util.List;
 /**
  * Created by 18348 on 2016/8/24.
  */
-public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, FindBean> {
+public class FindAdapter extends BaseRecyclerAdapter<FindAdapter.FindViewHolder, FindBean> {
+
+    private static final int TYPE_GRID = 0;
+    private static final int TYPE_SINGLE = 1;
 
     public FindAdapter(Context context) {
         super(context);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = getLayoutInflater().inflate(R.layout.adapter_find_item_layout, parent, false);
-        return new FindViewHolder(view);
+    public int getItemViewType(int position) {
+        List<String> imagePaths = get(position).getImagePaths();
+        return (imagePaths == null || imagePaths.isEmpty()) ? TYPE_GRID : (imagePaths.size() == 1 ? TYPE_SINGLE : TYPE_GRID);
+    }
+
+    @Override
+    public FindAdapter.FindViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = null;
+        switch (viewType) {
+            case TYPE_GRID:
+                view = getLayoutInflater().inflate(R.layout.adapter_find_item_grid_layout, parent, false);
+                return new GridViewHolder(view);
+            case TYPE_SINGLE:
+                view = getLayoutInflater().inflate(R.layout.adapter_find_item_single_layout, parent, false);
+                return new SingleViewHolder(view);
+            default:
+                view = null;
+        }
+        return new GridViewHolder(view);
     }
 
     @Override
@@ -54,30 +73,46 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
 
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        FindViewHolder viewHolder = (FindViewHolder) holder;
-        ImageGridAdapter adapter = (ImageGridAdapter) viewHolder.imageGrid.getAdapter();
-        final int layoutPosition = holder.getLayoutPosition();
-        if (layoutPosition < 0 && layoutPosition >= size()) {
-            return;
-        }
-        FindBean findBean = get(layoutPosition);
-        viewHolder.expandableTextView.setText(findBean.getContent());
-        imageLoader.displayImage(getContext(), findBean.getImageUrl(), viewHolder.userHead);
-        viewHolder.username.setText(findBean.getUsername());
-        viewHolder.createTime.setText(TimeUtil.formatDate(findBean.getCreateTime()));
+    public void onBindViewHolder(FindAdapter.FindViewHolder holder, int position) {
 
-        List<String> imagePaths = findBean.getImagePaths();
-        if (imagePaths != null /*&& !imagePaths.isEmpty()*/) {
-            adapter.getList().clear();
-            adapter.getList().addAll(imagePaths);
-            DiffUtil.calculateDiff(new DiffCallback<String>(new ArrayList<String>(adapter.getList()), imagePaths) {
-                @Override
-                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return TextUtils.equals(oldList.get(oldItemPosition), newList.get(newItemPosition));
+        final int layoutPosition = holder.getLayoutPosition();
+
+        FindBean findBean = get(layoutPosition);
+        holder.expandableTextView.setText(findBean.getContent());
+        holder.username.setText(findBean.getUsername());
+        holder.createTime.setText(TimeUtil.formatDate(findBean.getCreateTime()));
+
+        imageLoader.displayImage(getContext(), findBean.getImageUrl(), holder.userHead);
+
+        switch (holder.getItemViewType()) {
+            case TYPE_GRID: {
+                GridViewHolder gridViewHolder = (GridViewHolder) holder;
+                ImageGridAdapter adapter = (ImageGridAdapter) gridViewHolder.imageGrid.getAdapter();
+                if (layoutPosition < 0 && layoutPosition >= size()) {
+                    return;
                 }
-            }).dispatchUpdatesTo(viewHolder.imageGrid.getAdapter());
+                List<String> imagePaths = findBean.getImagePaths();
+                if (imagePaths != null /*&& !imagePaths.isEmpty()*/) {
+                    ArrayList<String> oldList = new ArrayList<>(adapter.getList());
+                    adapter.getList().clear();
+                    adapter.getList().addAll(imagePaths);
+                    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallback<String>(oldList, imagePaths) {
+                        @Override
+                        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                            return TextUtils.equals(oldList.get(oldItemPosition), newList.get(newItemPosition));
+                        }
+                    });
+                    diffResult.dispatchUpdatesTo(gridViewHolder.imageGrid.getAdapter());
+                }
+                break;
+            }
+            case TYPE_SINGLE:
+                imageLoader.displayImage(getContext(), findBean.getImagePaths().get(0), ((SingleViewHolder) holder).imageSingle);
+                break;
+            default:
         }
+
+
     }
 
     public class FindViewHolder extends RecyclerView.ViewHolder {
@@ -85,7 +120,6 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
         public TextView username;
         public TextView content;
         public TextView fullText;
-        public RecyclerView imageGrid;
         public TextView createTime;
         public ExpandableTextView expandableTextView;
 
@@ -95,15 +129,32 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
             this.username = (TextView) itemView.findViewById(R.id.find_item_user_name);
             this.content = (TextView) itemView.findViewById(R.id.expandable_text);
             this.fullText = (TextView) itemView.findViewById(R.id.expand_collapse);
-            this.imageGrid = (RecyclerView) itemView.findViewById(R.id.find_item_image_grid);
             this.createTime = (TextView) itemView.findViewById(R.id.find_item_create_time);
-
             this.expandableTextView = (ExpandableTextView) itemView.findViewById(R.id.ExpandableTextView);
+        }
+    }
+
+    public class GridViewHolder extends FindViewHolder {
+
+        public RecyclerView imageGrid;
+
+        public GridViewHolder(View itemView) {
+            super(itemView);
+            this.imageGrid = (RecyclerView) itemView.findViewById(R.id.find_item_image_single);
 
             this.imageGrid.setLayoutManager(new GridLayoutManager(getContext(), 3));
             this.imageGrid.addItemDecoration(new GridSpanItemDecoration(10, 10));
-
             this.imageGrid.setAdapter(new ImageGridAdapter(getContext()));
+        }
+
+    }
+
+    public class SingleViewHolder extends FindViewHolder {
+        public ImageView imageSingle;
+
+        public SingleViewHolder(View itemView) {
+            super(itemView);
+            this.imageSingle = (ImageView) itemView.findViewById(R.id.find_item_image_single);
         }
 
     }
