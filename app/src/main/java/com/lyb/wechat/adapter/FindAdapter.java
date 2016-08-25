@@ -13,10 +13,10 @@ import com.lyb.wechat.R;
 import com.lyb.wechat.bean.FindBean;
 import com.lyb.wechat.ui.widget.divider.GridSpanItemDecoration;
 import com.lyb.wechat.ui.widget.view.ExpandableTextView;
+import com.lyb.wechat.util.TimeUtil;
 import com.yuyh.library.imgsel.ImageLoader;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,7 +49,7 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
         }
     };
 
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd hh-mm");
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -62,7 +62,7 @@ public class FindAdapter extends BaseRecyclerAdapter<RecyclerView.ViewHolder, Fi
             viewHolder.expandableTextView.setText(findBean.getContent());
             imageLoader.displayImage(getContext(), findBean.getImageUrl(), viewHolder.userHead);
             viewHolder.username.setText(findBean.getUsername());
-            viewHolder.createTime.setText(simpleDateFormat.format(new Date(findBean.getCreateTime())) + "");
+            viewHolder.createTime.setText(TimeUtil.formatDate(findBean.getCreateTime()));
             List<String> imagePaths = findBean.getImagePaths();
             if (imagePaths != null && !imagePaths.isEmpty()) {
                 adapter.addAll(imagePaths);
